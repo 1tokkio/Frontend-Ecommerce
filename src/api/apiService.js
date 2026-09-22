@@ -56,33 +56,40 @@ async function llamar(msalInstance, url, opciones = {}) {
 export const obtenerPerfil = (msal) => llamar(msal, `${ENDPOINTS.usuarios}/perfil`);
 export const listarUsuarios = (msal) => llamar(msal, ENDPOINTS.usuarios);
 
+// ms-productos
+export const listarProductos = (msal) => llamar(msal, ENDPOINTS.productos);
+
 // ms-carrito
-export const listarProductos = (msal) => llamar(msal, `${ENDPOINTS.carrito}/productos`);
 export const verCarrito = (msal) => llamar(msal, ENDPOINTS.carrito);
-export const agregarAlCarrito = (msal, productoId, cantidad) =>
+export const agregarAlCarrito = (msal, producto, cantidad) =>
   llamar(msal, `${ENDPOINTS.carrito}/items`, {
     method: 'POST',
-    body: JSON.stringify({ productoId, cantidad })
+    body: JSON.stringify({
+      productoId: producto.id,
+      nombreProducto: producto.nombre,
+      precioUnitario: producto.precio,
+      cantidad
+    })
   });
 export const quitarDelCarrito = (msal, itemId) =>
   llamar(msal, `${ENDPOINTS.carrito}/items/${itemId}`, { method: 'DELETE' });
 export const vaciarCarrito = (msal) => llamar(msal, ENDPOINTS.carrito, { method: 'DELETE' });
 
-// ms-pedidos
-export const crearPedido = (msal, items) =>
-  llamar(msal, ENDPOINTS.pedidos, { method: 'POST', body: JSON.stringify({ items }) });
-export const misPedidos = (msal) => llamar(msal, `${ENDPOINTS.pedidos}/mis-pedidos`);
-export const listarTodosLosPedidos = (msal) => llamar(msal, ENDPOINTS.pedidos);
+// ms-ordenes
+export const crearOrden = (msal, items) =>
+  llamar(msal, ENDPOINTS.ordenes, { method: 'POST', body: JSON.stringify({ items }) });
+export const misOrdenes = (msal) => llamar(msal, `${ENDPOINTS.ordenes}/mis-ordenes`);
+export const listarTodasLasOrdenes = (msal) => llamar(msal, ENDPOINTS.ordenes);
 
 /** Llamada deliberadamente sin token, para demostrar la ruta abierta del gateway. */
 export async function estadoPublico() {
-  const respuesta = await fetch(`${ENDPOINTS.carrito}/estado`);
+  const respuesta = await fetch(`${ENDPOINTS.productos}/estado`);
   return { status: respuesta.status, cuerpo: await respuesta.json() };
 }
 
 /** Llamada deliberadamente sin token a una ruta protegida. Debe devolver 401. */
 export async function pruebaSinToken() {
-  const respuesta = await fetch(`${ENDPOINTS.carrito}/productos`);
+  const respuesta = await fetch(ENDPOINTS.productos);
   let cuerpo = null;
   try {
     cuerpo = await respuesta.json();

@@ -1,20 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useMsal } from '@azure/msal-react'
-import { listarUsuarios, listarTodosLosPedidos } from '../api/apiService'
+import { listarUsuarios, listarTodasLasOrdenes } from '../api/apiService'
 import { formatearPrecio } from '../utils'
 
 /** Solo visible con el rol Admin. Consume los dos endpoints restringidos del backend. */
 export default function Administracion() {
   const { instance } = useMsal();
   const [usuarios, setUsuarios] = useState([]);
-  const [pedidos, setPedidos] = useState([]);
+  const [ordenes, setOrdenes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([listarUsuarios(instance), listarTodosLosPedidos(instance)])
-      .then(([u, p]) => {
+    Promise.all([listarUsuarios(instance), listarTodasLasOrdenes(instance)])
+      .then(([u, o]) => {
         setUsuarios(u);
-        setPedidos(p);
+        setOrdenes(o);
       })
       .catch((e) => setError(e.message));
   }, [instance]);
@@ -41,18 +41,18 @@ export default function Administracion() {
         </tbody>
       </table>
 
-      <h2>Todos los pedidos ({pedidos.length})</h2>
+      <h2>Todas las ordenes ({ordenes.length})</h2>
       <table className="tabla">
         <thead>
-          <tr><th>Pedido</th><th>Cliente</th><th>Estado</th><th className="num">Total</th></tr>
+          <tr><th>Orden</th><th>Cliente</th><th>Estado</th><th className="num">Total</th></tr>
         </thead>
         <tbody>
-          {pedidos.map((pedido) => (
-            <tr key={pedido.id}>
-              <td>#{pedido.id}</td>
-              <td>{pedido.correoUsuario}</td>
-              <td>{pedido.estado}</td>
-              <td className="num">{formatearPrecio(pedido.total)}</td>
+          {ordenes.map((orden) => (
+            <tr key={orden.id}>
+              <td>#{orden.id}</td>
+              <td>{orden.correoUsuario}</td>
+              <td>{orden.estado}</td>
+              <td className="num">{formatearPrecio(orden.total)}</td>
             </tr>
           ))}
         </tbody>

@@ -33,7 +33,7 @@ export default function Navbar() {
           <nav className="enlaces">
             {enlace('/', 'Catalogo')}
             {enlace('/carrito', 'Carrito')}
-            {enlace('/pedidos', 'Mis pedidos')}
+            {enlace('/ordenes', 'Mis ordenes')}
             {enlace('/perfil', 'Perfil')}
             {roles.includes('Admin') && enlace('/administracion', 'Administracion')}
             {enlace('/diagnostico', 'Diagnostico')}

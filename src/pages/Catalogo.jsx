@@ -19,7 +19,7 @@ export default function Catalogo() {
 
   const agregar = async (producto) => {
     try {
-      await agregarAlCarrito(instance, producto.id, 1);
+      await agregarAlCarrito(instance, producto, 1);
       setMensaje(`${producto.nombre} agregado al carrito`);
       setTimeout(() => setMensaje(null), 2500);
     } catch (e) {
@@ -41,7 +41,12 @@ export default function Catalogo() {
             <h2>{producto.nombre}</h2>
             <p className="descripcion">{producto.descripcion}</p>
             <p className="precio">{formatearPrecio(producto.precio)}</p>
-            <button className="boton" onClick={() => agregar(producto)}>Agregar</button>
+            <p className={producto.stock > 0 ? 'stock' : 'stock stock-agotado'}>
+              {producto.stock > 0 ? `Stock: ${producto.stock}` : 'Sin stock'}
+            </p>
+            <button className="boton" disabled={producto.stock <= 0} onClick={() => agregar(producto)}>
+              Agregar
+            </button>
           </article>
         ))}
       </div>

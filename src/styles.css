@@ -73,6 +73,8 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 }
 .tarjeta .descripcion { font-size: 13.5px; margin: 0; flex: 1; }
 .precio { font-size: 19px; font-weight: 600; margin: 4px 0 10px; }
+.stock { font-size: 12.5px; color: var(--apagado); margin: 0 0 6px; }
+.stock-agotado { color: #b3261e; font-weight: 600; }
 
 /* Tablas */
 .tabla { width: 100%; border-collapse: collapse; background: var(--superficie); margin-bottom: 20px; }

@@ -32,6 +32,7 @@ export const apiRequest = {
 
 export const ENDPOINTS = {
   usuarios: import.meta.env.VITE_MS_USUARIOS_URL,
+  productos: import.meta.env.VITE_MS_PRODUCTOS_URL,
   carrito: import.meta.env.VITE_MS_CARRITO_URL,
-  pedidos: import.meta.env.VITE_MS_PEDIDOS_URL
+  ordenes: import.meta.env.VITE_MS_ORDENES_URL
 };

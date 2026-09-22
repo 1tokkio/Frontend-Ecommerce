@@ -5,7 +5,7 @@ import RutaProtegida from './components/RutaProtegida'
 import Bienvenida from './pages/Bienvenida'
 import Catalogo from './pages/Catalogo'
 import Carrito from './pages/Carrito'
-import MisPedidos from './pages/MisPedidos'
+import MisOrdenes from './pages/MisOrdenes'
 import Perfil from './pages/Perfil'
 import Administracion from './pages/Administracion'
 import Diagnostico from './pages/Diagnostico'
@@ -23,7 +23,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Catalogo />} />
             <Route path="/carrito" element={<RutaProtegida><Carrito /></RutaProtegida>} />
-            <Route path="/pedidos" element={<RutaProtegida><MisPedidos /></RutaProtegida>} />
+            <Route path="/ordenes" element={<RutaProtegida><MisOrdenes /></RutaProtegida>} />
             <Route path="/perfil" element={<RutaProtegida><Perfil /></RutaProtegida>} />
             <Route path="/administracion" element={<RutaProtegida rol="Admin"><Administracion /></RutaProtegida>} />
             <Route path="/diagnostico" element={<RutaProtegida><Diagnostico /></RutaProtegida>} />

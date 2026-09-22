@@ -39,27 +39,27 @@ export default function Diagnostico() {
   const probarRutaAbierta = async () => {
     try {
       const { status } = await estadoPublico();
-      registrar('GET /carrito/estado sin token', '200', String(status));
+      registrar('GET /productos/estado sin token', '200', String(status));
     } catch (e) {
-      registrar('GET /carrito/estado sin token', '200', `fallo: ${e.message}`);
+      registrar('GET /productos/estado sin token', '200', `fallo: ${e.message}`);
     }
   };
 
   const probarSinToken = async () => {
     try {
       const { status } = await pruebaSinToken();
-      registrar('GET /carrito/productos sin token', '401', String(status));
+      registrar('GET /productos sin token', '401', String(status));
     } catch (e) {
-      registrar('GET /carrito/productos sin token', '401', `fallo: ${e.message}`);
+      registrar('GET /productos sin token', '401', `fallo: ${e.message}`);
     }
   };
 
   const probarConToken = async () => {
     try {
       await listarProductos(instance);
-      registrar('GET /carrito/productos con token', '200', '200');
+      registrar('GET /productos con token', '200', '200');
     } catch (e) {
-      registrar('GET /carrito/productos con token', '200', e.message);
+      registrar('GET /productos con token', '200', e.message);
     }
   };
 

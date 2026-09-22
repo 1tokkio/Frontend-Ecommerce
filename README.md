@@ -1,8 +1,9 @@
 # pedidos360-frontend
 
 Single Page Application de Pedidos360, construida con React 18, Vite y MSAL.
-Se autentica contra Microsoft Entra ID y consume los tres microservicios a traves
-del API Gateway de AWS.
+Se autentica contra Microsoft Entra ID y consume los seis microservicios a traves
+del API Gateway `pedidos360-api`. La propia SPA se sirve por nginx desde una
+instancia EC2, detras del API Gateway `pedidos360-web`.
 
 ## Flujo de autenticacion
 
@@ -22,12 +23,12 @@ El token se pide en dos momentos distintos:
 ## Paginas
 
 | Ruta               | Que hace                                                        |
-|--------------------|-----------------------------------------------------------------|
-| `/`                | Catalogo de productos.                                          |
-| `/carrito`         | Carrito del usuario y confirmacion del pedido.                  |
-| `/pedidos`         | Historial de pedidos propios.                                   |
+|---------------------|-------------------------------------------------------------------|
+| `/`                | Catalogo de productos, con el stock de cada uno.                |
+| `/carrito`         | Carrito del usuario y confirmacion de la orden.                 |
+| `/ordenes`         | Historial de ordenes propias.                                   |
 | `/perfil`          | Datos del usuario guardados por ms-usuarios.                    |
-| `/administracion`  | Usuarios y pedidos de todos. **Solo con el rol Admin.**         |
+| `/administracion`  | Usuarios y ordenes de todos. **Solo con el rol Admin.**         |
 | `/diagnostico`     | Token decodificado y pruebas de 200, 401 y 403.                 |
 
 La pagina de diagnostico existe para la defensa del proyecto: muestra `iss`,
@@ -52,8 +53,18 @@ la imagen si cambia alguna.
 Queda en http://localhost:5173, que tiene que estar registrado como redirect URI
 de tipo SPA en el registro de la aplicacion de Entra ID.
 
-Para generar el build que se sube a S3:
+Para generar la imagen que se despliega en la instancia de frontend:
 
-    npm run build
+    docker build -t pedidos360-frontend \
+      --build-arg VITE_AZURE_CLIENT_ID=... \
+      --build-arg VITE_AZURE_TENANT_ID=... \
+      --build-arg VITE_AZURE_AUTHORITY=... \
+      --build-arg VITE_AZURE_SCOPE=... \
+      --build-arg VITE_MS_USUARIOS_URL=... \
+      --build-arg VITE_MS_PRODUCTOS_URL=... \
+      --build-arg VITE_MS_CARRITO_URL=... \
+      --build-arg VITE_MS_ORDENES_URL=... \
+      .
 
-El resultado queda en `dist/`.
+La imagen sirve el build con nginx en el puerto 80, detras del API Gateway
+`pedidos360-web`.
