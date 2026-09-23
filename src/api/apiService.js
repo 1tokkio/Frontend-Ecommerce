@@ -72,7 +72,7 @@ export const agregarAlCarrito = (msal, producto, cantidad) =>
     })
   });
 export const quitarDelCarrito = (msal, itemId) =>
-  llamar(msal, `${ENDPOINTS.carrito}/items/${itemId}`, { method: 'DELETE' });
+  llamar(msal, `${ENDPOINTS.carrito}/items?id=${itemId}`, { method: 'DELETE' });
 export const vaciarCarrito = (msal) => llamar(msal, ENDPOINTS.carrito, { method: 'DELETE' });
 
 // ms-ordenes
