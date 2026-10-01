@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react'
-import { useMsal } from '@azure/msal-react'
+import { useSesion } from '../auth/useSesion'
 import { misOrdenes } from '../api/apiService'
 import { formatearPrecio, formatearFecha } from '../utils'
 
 export default function MisOrdenes() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const [ordenes, setOrdenes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    misOrdenes(instance)
+    misOrdenes(sesion)
       .then(setOrdenes)
       .catch((e) => setError(e.message))
       .finally(() => setCargando(false));
-  }, [instance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (cargando) return <p className="aviso">Cargando ordenes...</p>;
   if (error) return <p className="aviso aviso-error">{error}</p>;

@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
-import { useMsal } from '@azure/msal-react'
+import { useSesion } from '../auth/useSesion'
 import { obtenerPerfil } from '../api/apiService'
 import { formatearFecha } from '../utils'
 
 export default function Perfil() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const [perfil, setPerfil] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    obtenerPerfil(instance).then(setPerfil).catch((e) => setError(e.message));
-  }, [instance]);
+    obtenerPerfil(sesion).then(setPerfil).catch((e) => setError(e.message));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (error) return <p className="aviso aviso-error">{error}</p>;
   if (!perfil) return <p className="aviso">Cargando perfil...</p>;

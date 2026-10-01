@@ -1,23 +1,24 @@
 import { useEffect, useState } from 'react'
-import { useMsal } from '@azure/msal-react'
+import { useSesion } from '../auth/useSesion'
 import { listarUsuarios, listarTodasLasOrdenes } from '../api/apiService'
 import { formatearPrecio } from '../utils'
 
 /** Solo visible con el rol Admin. Consume los dos endpoints restringidos del backend. */
 export default function Administracion() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const [usuarios, setUsuarios] = useState([]);
   const [ordenes, setOrdenes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([listarUsuarios(instance), listarTodasLasOrdenes(instance)])
+    Promise.all([listarUsuarios(sesion), listarTodasLasOrdenes(sesion)])
       .then(([u, o]) => {
         setUsuarios(u);
         setOrdenes(o);
       })
       .catch((e) => setError(e.message));
-  }, [instance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (error) return <p className="aviso aviso-error">{error}</p>;
 

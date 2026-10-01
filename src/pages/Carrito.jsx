@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useMsal } from '@azure/msal-react'
+import { useSesion } from '../auth/useSesion'
 import { verCarrito, quitarDelCarrito, vaciarCarrito, crearOrden } from '../api/apiService'
 import { formatearPrecio } from '../utils'
 
 export default function Carrito() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const navegar = useNavigate();
   const [carrito, setCarrito] = useState({ items: [], total: 0 });
   const [cargando, setCargando] = useState(true);
@@ -13,17 +13,18 @@ export default function Carrito() {
 
   const cargar = useCallback(() => {
     setCargando(true);
-    verCarrito(instance)
+    verCarrito(sesion)
       .then(setCarrito)
       .catch((e) => setError(e.message))
       .finally(() => setCargando(false));
-  }, [instance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(cargar, [cargar]);
 
   const quitar = async (itemId) => {
     try {
-      await quitarDelCarrito(instance, itemId);
+      await quitarDelCarrito(sesion, itemId);
       cargar();
     } catch (e) {
       setError(e.message);
@@ -38,8 +39,8 @@ export default function Carrito() {
         precioUnitario: item.precioUnitario,
         cantidad: item.cantidad
       }));
-      await crearOrden(instance, items);
-      await vaciarCarrito(instance);
+      await crearOrden(sesion, items);
+      await vaciarCarrito(sesion);
       navegar('/ordenes');
     } catch (e) {
       setError(e.message);

@@ -1,25 +1,26 @@
 import { useEffect, useState } from 'react'
-import { useMsal } from '@azure/msal-react'
+import { useSesion } from '../auth/useSesion'
 import { listarProductos, agregarAlCarrito } from '../api/apiService'
 import { formatearPrecio } from '../utils'
 
 export default function Catalogo() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [mensaje, setMensaje] = useState(null);
 
   useEffect(() => {
-    listarProductos(instance)
+    listarProductos(sesion)
       .then(setProductos)
       .catch((e) => setError(e.message))
       .finally(() => setCargando(false));
-  }, [instance]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const agregar = async (producto) => {
     try {
-      await agregarAlCarrito(instance, producto, 1);
+      await agregarAlCarrito(sesion, producto, 1);
       setMensaje(`${producto.nombre} agregado al carrito`);
       setTimeout(() => setMensaje(null), 2500);
     } catch (e) {

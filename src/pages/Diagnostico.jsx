@@ -1,16 +1,17 @@
 import { useState } from 'react'
-import { useMsal } from '@azure/msal-react'
-import { obtenerToken, estadoPublico, pruebaSinToken, listarProductos, listarUsuarios } from '../api/apiService'
+import { useSesion } from '../auth/useSesion'
+import { estadoPublico, pruebaSinToken, listarProductos, listarUsuarios } from '../api/apiService'
 import { formatearFecha } from '../utils'
 
 /**
  * Pagina de evidencia para la presentacion. Muestra el token decodificado y
- * dispara las tres llamadas que la pauta pide demostrar: una ruta abierta que
- * responde 200, una ruta protegida sin token que responde 401, y una ruta
- * restringida por rol que responde 200 o 403 segun quien este conectado.
+ * dispara las llamadas que la pauta pide demostrar: una ruta abierta que
+ * responde 200, una ruta protegida sin token que responde 401, una ruta de
+ * cliente que responde 200 con cualquiera de los dos proveedores, y una ruta
+ * de administracion que solo responde 200 con un token de Azure.
  */
 export default function Diagnostico() {
-  const { instance } = useMsal();
+  const sesion = useSesion();
   const [token, setToken] = useState(null);
   const [contenido, setContenido] = useState(null);
   const [pruebas, setPruebas] = useState([]);
@@ -23,7 +24,7 @@ export default function Diagnostico() {
 
   const mostrarToken = async () => {
     try {
-      const accessToken = await obtenerToken(instance);
+      const accessToken = await sesion.obtenerToken();
       setToken(accessToken);
       setContenido(decodificar(accessToken));
       setError(null);
@@ -56,19 +57,19 @@ export default function Diagnostico() {
 
   const probarConToken = async () => {
     try {
-      await listarProductos(instance);
-      registrar('GET /productos con token', '200', '200');
+      await listarProductos(sesion);
+      registrar('GET /productos con token (Admin o Cliente)', '200', '200');
     } catch (e) {
-      registrar('GET /productos con token', '200', e.message);
+      registrar('GET /productos con token (Admin o Cliente)', '200', e.message);
     }
   };
 
   const probarRolAdmin = async () => {
     try {
-      await listarUsuarios(instance);
-      registrar('GET /usuarios (requiere Admin)', '200 si eres Admin, 403 si no', '200');
+      await listarUsuarios(sesion);
+      registrar('GET /usuarios (requiere Admin, solo Azure)', '200 si es Azure, 403 si es Cognito', '200');
     } catch (e) {
-      registrar('GET /usuarios (requiere Admin)', '200 si eres Admin, 403 si no', e.message);
+      registrar('GET /usuarios (requiere Admin, solo Azure)', '200 si es Azure, 403 si es Cognito', e.message);
     }
   };
 
@@ -77,7 +78,11 @@ export default function Diagnostico() {
       <h1>Diagnostico</h1>
       <p className="descripcion">
         Herramienta de verificacion. Sirve para mostrar en vivo que el token trae
-        los claims esperados y que cada ruta responde el codigo correcto.
+        los claims esperados y que cada ruta responde el codigo correcto, venga
+        el token de Azure o de Cognito.
+      </p>
+      <p className="descripcion">
+        Sesion activa: <strong>{sesion.proveedor === 'azure' ? 'Microsoft Entra ID' : 'AWS Cognito'}</strong>
       </p>
 
       {error && <p className="aviso aviso-error">{error}</p>}
@@ -95,10 +100,10 @@ export default function Diagnostico() {
           <h2>Claims del access token</h2>
           <dl className="ficha">
             <div><dt>iss (emisor)</dt><dd className="mono">{contenido.iss}</dd></div>
-            <div><dt>aud (audiencia)</dt><dd className="mono">{contenido.aud}</dd></div>
-            <div><dt>scp (permisos)</dt><dd className="mono">{contenido.scp || 'sin scopes'}</dd></div>
-            <div><dt>roles</dt><dd className="mono">{(contenido.roles || []).join(', ') || 'sin roles'}</dd></div>
-            <div><dt>oid (usuario)</dt><dd className="mono">{contenido.oid}</dd></div>
+            <div><dt>aud (audiencia)</dt><dd className="mono">{contenido.aud || 'sin aud'}</dd></div>
+            <div><dt>client_id</dt><dd className="mono">{contenido.client_id || 'sin client_id'}</dd></div>
+            <div><dt>roles (Azure)</dt><dd className="mono">{(contenido.roles || []).join(', ') || 'sin roles'}</dd></div>
+            <div><dt>cognito:groups</dt><dd className="mono">{(contenido['cognito:groups'] || []).join(', ') || 'sin grupos'}</dd></div>
             <div><dt>exp (expira)</dt><dd className="mono">{formatearFecha(contenido.exp * 1000)}</dd></div>
           </dl>
 
