@@ -45,6 +45,7 @@ h2 { font-size: 20px; margin: 28px 0 10px; }
 .enlaces a.activo { color: var(--acento); border-bottom: 2px solid var(--acento); }
 .sesion { display: flex; align-items: center; gap: 12px; }
 .usuario { color: var(--apagado); font-size: 13.5px; }
+.botones-login { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 /* Botones */
 .boton {
