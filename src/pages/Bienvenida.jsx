@@ -1,20 +1,15 @@
-import { useMsal } from '@azure/msal-react'
-import { loginRequest } from '../authConfig'
+import LoginButton from '../components/LoginButton'
 
 export default function Bienvenida() {
-  const { instance } = useMsal();
-
   return (
     <section className="bienvenida">
       <h1>Tienda Pedidos360</h1>
       <p>
-        Para ver el catalogo y comprar necesitas iniciar sesion con tu cuenta.
-        La autenticacion la resuelve Microsoft Entra ID y el catalogo viaja
-        protegido por el API Gateway.
+        Para ver el catalogo y comprar necesitas iniciar sesion. Los administradores
+        entran con su cuenta de Microsoft; los clientes se registran e inician
+        sesion con su cuenta de AWS.
       </p>
-      <button className="boton" onClick={() => instance.loginPopup(loginRequest)}>
-        Iniciar sesion
-      </button>
+      <LoginButton />
     </section>
   )
 }

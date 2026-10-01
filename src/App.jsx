@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from '@azure/msal-react'
+import { useSesion } from './auth/useSesion'
 import Navbar from './components/Navbar'
 import RutaProtegida from './components/RutaProtegida'
 import Bienvenida from './pages/Bienvenida'
@@ -11,15 +11,15 @@ import Administracion from './pages/Administracion'
 import Diagnostico from './pages/Diagnostico'
 
 export default function App() {
+  const { autenticado } = useSesion();
+
   return (
     <>
       <Navbar />
       <main className="contenedor">
-        <UnauthenticatedTemplate>
-          <Bienvenida />
-        </UnauthenticatedTemplate>
+        {!autenticado && <Bienvenida />}
 
-        <AuthenticatedTemplate>
+        {autenticado && (
           <Routes>
             <Route path="/" element={<Catalogo />} />
             <Route path="/carrito" element={<RutaProtegida><Carrito /></RutaProtegida>} />
@@ -29,7 +29,7 @@ export default function App() {
             <Route path="/diagnostico" element={<RutaProtegida><Diagnostico /></RutaProtegida>} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-        </AuthenticatedTemplate>
+        )}
       </main>
     </>
   )
