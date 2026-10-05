@@ -19,6 +19,9 @@ export function useSesion() {
     ? (accounts[0]?.name || accounts[0]?.username)
     : (cognito.user?.profile?.email || cognito.user?.profile?.phone_number || 'usuario Cognito');
 
+  // Respaldo para ms-ordenes: el access token de Cognito no lleva el claim email.
+  const correo = sesionAzure ? accounts[0]?.username : cognito.user?.profile?.email;
+
   const obtenerToken = async () => {
     if (sesionAzure) {
       const respuesta = await instance.acquireTokenSilent({ ...apiRequest, account: accounts[0] });
@@ -45,6 +48,7 @@ export function useSesion() {
     proveedor: sesionAzure ? 'azure' : (sesionCognito ? 'cognito' : null),
     esAdmin: sesionAzure,
     nombre,
+    correo,
     obtenerToken
   };
 }

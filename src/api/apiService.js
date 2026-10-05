@@ -57,7 +57,7 @@ export const vaciarCarrito = (sesion) => llamar(sesion, ENDPOINTS.carrito, { met
 
 // ms-ordenes
 export const crearOrden = (sesion, items) =>
-  llamar(sesion, ENDPOINTS.ordenes, { method: 'POST', body: JSON.stringify({ items }) });
+  llamar(sesion, ENDPOINTS.ordenes, { method: 'POST', body: JSON.stringify({ items, correo: sesion.correo }) });
 export const misOrdenes = (sesion) => llamar(sesion, `${ENDPOINTS.ordenes}/mis-ordenes`);
 export const listarTodasLasOrdenes = (sesion) => llamar(sesion, ENDPOINTS.ordenes);
 
